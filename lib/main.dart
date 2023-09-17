@@ -44,8 +44,8 @@ class _MyAppState extends State<MyApp> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.business),
-              label: 'Services',
+              icon: Icon(Icons.admin_panel_settings),
+              label: 'Admin',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),

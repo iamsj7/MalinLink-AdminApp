@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'config.dart';
 
 class CreateUserPage extends StatefulWidget {
@@ -14,24 +15,47 @@ class _CreateUserPageState extends State<CreateUserPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String userId = "";
 
   Future<void> createUser() async {
     try {
-      final response = await http.post(
+      final request = http.MultipartRequest(
+        'POST',
         Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer $apiKey',
-        },
-        body: {
-          'name': nameController.text,
-          'email': emailController.text,
-          'password': passwordController.text,
-        },
       );
 
-      if (response.statusCode == 201 || response.statusCode == 200) {
+      request.headers['Authorization'] = 'Bearer $apiKey';
+
+      request.fields['name'] = nameController.text;
+      request.fields['email'] = emailController.text;
+      request.fields['password'] = passwordController.text;
+
+      final response = await request.send();
+
+      if (response.statusCode == 201) {
         // User created successfully
-        Navigator.pop(context); // Return to the previous screen
+        final responseData = await response.stream.bytesToString();
+        final userIdFromResponse = jsonDecode(responseData)['data']['id'];
+        setState(() {
+          userId = userIdFromResponse.toString();
+        });
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Success"),
+              content: Text("User created successfully. User ID: $userId"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
       } else if (response.statusCode == 401) {
         // Handle unauthorized error
         showDialog(

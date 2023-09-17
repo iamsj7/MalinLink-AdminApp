@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:connectivity/connectivity.dart';
-import 'user_details_page.dart'; // Im
+import 'user_details_page.dart'; // Import the user details page
 import 'config.dart';
 
 class ListUsersPage extends StatefulWidget {
@@ -56,6 +56,11 @@ class _ListUsersPageState extends State<ListUsersPage> {
         headers: {'Authorization': 'Bearer $apiKey'},
       );
 
+      if (!mounted) {
+        // Check if the widget is still mounted before updating the state
+        return;
+      }
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final users = data['data'];
@@ -78,6 +83,10 @@ class _ListUsersPageState extends State<ListUsersPage> {
       }
     } catch (e) {
       print('Error: $e');
+      if (!mounted) {
+        // Check if the widget is still mounted before showing the dialog
+        return;
+      }
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -121,6 +130,8 @@ class _ListUsersPageState extends State<ListUsersPage> {
               itemCount: usersData!.length,
               itemBuilder: (context, index) {
                 final user = usersData![index];
+                final billing = user['billing'];
+
                 return GestureDetector(
                   onTap: () async {
                     final deleted = await Navigator.push(
@@ -147,7 +158,14 @@ class _ListUsersPageState extends State<ListUsersPage> {
                           fontSize: 16.0,
                         ),
                       ),
-                      subtitle: Text('Email: ${user['email']}'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Email: ${user['email']}'),
+                          Text('User ID: ${user['id']}'),
+                          Text('Plan ID: ${user['plan_id']}'),
+                        ],
+                      ),
                     ),
                   ),
                 );

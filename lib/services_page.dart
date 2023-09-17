@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_malinlink/create_user.dart';
 import 'package:flutter_malinlink/list_plan.dart';
 import 'package:flutter_malinlink/list_users_page.dart';
+import 'package:flutter_malinlink/onetime_login_page.dart';
+import 'package:flutter_malinlink/search_user_page.dart';
 
 class ServicesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Services'),
+        title: Text('Admin Dashboard'),
       ),
       body: GridView.count(
         crossAxisCount: 2,
@@ -37,6 +39,30 @@ class ServicesPage extends StatelessWidget {
             },
           ),
           ServiceCard(
+            title: 'Search Users',
+            subtext: 'Search user data',
+            icon: Icons.search,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchUserPage()),
+              );
+              // Implement delete user functionality or navigate to the Delete Users page.
+            },
+          ),
+          ServiceCard(
+            title: 'Login Code',
+            subtext: 'one time login code',
+            icon: Icons.password,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => OnetimeLoginPage()),
+              );
+              // Implement delete user functionality or navigate to the Delete Users page.
+            },
+          ),
+          ServiceCard(
             title: 'List Plans',
             subtext: 'View available plans',
             icon: Icons.assignment,
@@ -45,14 +71,6 @@ class ServicesPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(builder: (context) => ListPlansPage()),
               );
-            },
-          ),
-          ServiceCard(
-            title: 'Delete Users',
-            subtext: 'Delete user data',
-            icon: Icons.delete,
-            onTap: () {
-              // Implement delete user functionality or navigate to the Delete Users page.
             },
           ),
         ],
